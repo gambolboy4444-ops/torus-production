@@ -5,11 +5,15 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-export async function GET() {
+export async function POST() {
   const result = await pool.query(`
-    SELECT *
-    FROM torus_state
+    UPDATE torus_state
+    SET core_cash = core_cash + 1,
+        nodes_count = nodes_count + 1,
+        status = 'ONLINE',
+        updated_at = NOW()
     WHERE id = 1
+    RETURNING *;
   `);
 
   return NextResponse.json(result.rows[0]);
